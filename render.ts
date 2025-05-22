@@ -41,6 +41,7 @@ async function Render(id: string) {
         serveUrl: bundleLocation,
         id: compositionId,
         inputProps,
+        timeoutInMilliseconds: 1000*60*30, // 30 minutes
     });
 
     // Render the video. Pass the same `inputProps` again
@@ -53,6 +54,11 @@ async function Render(id: string) {
         inputProps,
         onProgress: (progress) => {
             console.log(`Render progress: ${progress}%`);
+        },
+        timeoutInMilliseconds: 1000*60*30, // 30 minutes,
+        chromiumOptions: {
+            disableWebSecurity: true,
+            ignoreCertificateErrors: true
         }
     });
 
