@@ -10,7 +10,6 @@ import {
 } from "./get-number-of-lines-for-text";
 import { CAPTIONS_FONT_SIZE } from "./constants";
 import { FONT_FAMILY } from "./font";
-
 const useWindowedFrameCaptions = ({
   captions,
   windowStart,
@@ -20,12 +19,14 @@ const useWindowedFrameCaptions = ({
   windowStart: number;
   windowEnd: number;
 }) => {
+  if (typeof captions === "string") captions = JSON.parse(captions)
   return useMemo(() => {
     return captions.filter(({ startMs, endMs }) => {
       return msToFrame(startMs) >= windowStart && msToFrame(endMs) <= windowEnd;
     });
   }, [captions, windowEnd, windowStart]);
 };
+
 
 export const PaginatedCaptions: React.FC<{
   readonly captions: Caption[];
@@ -73,12 +74,15 @@ export const PaginatedCaptions: React.FC<{
     frame,
   });
 
+
   return (
     <div
       style={{
-        position: "relative",
+        position: "absolute",
         overflow: "hidden",
         paddingBottom: "20px",
+        paddingTop: "30px",
+        bottom: "1rem"
       }}
     >
       <div ref={windowRef}>

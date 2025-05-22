@@ -52,7 +52,7 @@ async function askQuestions(
 
 async function transcribeAudio(options: TranscriptionOptions) {
   const WHISPER_VERSION = process.platform === "win32" ? "1.6.0" : "1.7.4";
-  const WHISPER_MODEL: WhisperModel = "medium";
+  const WHISPER_MODEL: WhisperModel = "small";
   const WHISPER_PATH = path.join(process.cwd(), "whisper.cpp");
 
   await installWhisperCpp({
@@ -73,7 +73,7 @@ async function transcribeAudio(options: TranscriptionOptions) {
 
   // Cut the audio starting from speech start time and convert to 16-bit WAV
   execSync(
-    `npx remotion ffmpeg -i "${options.audioPath}" -ss ${options.speechStartsAtSecond} -ar 16000 -ac 1 "${tempAudioForWhisper}" -y`,
+    `bunx remotion ffmpeg -i "${options.audioPath}" -ss ${options.speechStartsAtSecond} -ar 16000 -ac 1 "${tempAudioForWhisper}" -y`,
   );
 
   const whisperCppOutput = await transcribe({

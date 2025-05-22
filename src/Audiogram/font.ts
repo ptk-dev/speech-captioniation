@@ -1,4 +1,4 @@
-import { loadFont, fontFamily } from "@remotion/google-fonts/IBMPlexSans";
+import { loadFont, fontFamily } from "@remotion/google-fonts/Montserrat";
 
 const loading = loadFont("normal", {
   weights: ["500", "600"],

@@ -22,29 +22,17 @@ const oscilloscopeVisualizerSchema = baseVisualizerSchema.extend({
   padding: z.number().int().min(0).default(50),
 });
 
-const visualizerSchema = z.discriminatedUnion("type", [
-  spectrumVisualizerSchema,
-  oscilloscopeVisualizerSchema,
-]);
-
 export const audiogramSchema = z.object({
-  // visualizer settings
-  visualizer: visualizerSchema,
   // podcast data
-  coverImageUrl: z.string(),
   titleText: z.string(),
   titleColor: zColor(),
   // captions settings
-  captionsFileName: z
-    .string()
-    .refine((s) => s.endsWith(".srt") || s.endsWith(".json"), {
-      message: "Subtitles file must be a .srt or .json file",
-    }),
   captionsTextColor: zColor(),
   onlyDisplayCurrentSentence: z.boolean(),
   // audio settings
-  audioFileUrl: z.string(),
+  audioFileUrl: z.string().nullable(),
   audioOffsetInSeconds: z.number().min(0),
+  id: z.string()
 });
 
 export type AudiogramCompositionSchemaType = z.infer<typeof audiogramSchema> & {

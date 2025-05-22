@@ -1,17 +1,19 @@
-import { Easing } from "remotion";
+import { Easing, useVideoConfig } from "remotion";
 import { interpolate } from "remotion";
 import React, { useMemo } from "react";
 import { Caption } from "@remotion/captions";
 import { msToFrame } from "../helpers/ms-to-frame";
+import nlp from "compromise";
 
 export const Word: React.FC<{
   readonly item: Caption;
   readonly frame: number;
   readonly transcriptionColor: string;
 }> = ({ item, frame, transcriptionColor }) => {
+  const fps = useVideoConfig().fps
   const opacity = interpolate(
     frame,
-    [msToFrame(item.startMs), msToFrame(item.startMs) + 15],
+    [msToFrame(item.startMs) - 2 * fps, msToFrame(item.startMs)],
     [0, 1],
     {
       extrapolateLeft: "clamp",
@@ -19,26 +21,31 @@ export const Word: React.FC<{
     },
   );
 
-  const translateY = interpolate(
+  const blur = interpolate(
     frame,
-    [msToFrame(item.startMs), msToFrame(item.startMs) + 10],
-    [0.25, 0],
+    [msToFrame(item.startMs) - fps, msToFrame(item.startMs)],
+    [50, 0],
     {
-      easing: Easing.out(Easing.quad),
+      easing: Easing.out(Easing.linear),
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     },
   );
+
+  const verbs = nlp(item.text).verbs().out('array').length > 0;
+  const nouns = nlp(item.text).nouns().out('array').length > 0;
+  const adjectives = nlp(item.text).adjectives().out('array').length > 0;
 
   const style: React.CSSProperties = useMemo(() => {
     return {
       display: "inline-block",
       whiteSpace: "pre",
       opacity,
-      translate: `0 ${translateY}em`,
-      color: transcriptionColor,
+      color: verbs ? "#FFC72C" : nouns ? "#00B2FF" : adjectives ? "#25D366" : transcriptionColor,
+      filter: `blur(${blur}px)`,
     };
-  }, [opacity, transcriptionColor, translateY]);
+  }, [opacity, verbs, nouns, adjectives, transcriptionColor, blur]);
+
 
   return <span style={style}>{item.text}</span>;
 };
