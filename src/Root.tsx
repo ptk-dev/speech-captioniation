@@ -44,7 +44,7 @@ export const RemotionRoot: React.FC = () => {
             });
 
             return {
-              durationInFrames: Math.floor(
+              durationInFrames: FPS*2 || Math.floor(
                 (slowDurationInSeconds - props.audioOffsetInSeconds) * FPS,
               ),
               props: {
@@ -57,7 +57,7 @@ export const RemotionRoot: React.FC = () => {
           } catch (e) {
             console.error("Error fetching audio file", e);
             return {
-              durationInFrames: Math.floor(
+              durationInFrames: FPS*Math.floor(
                 (props.audioOffsetInSeconds) * FPS,
               ),
               props: {

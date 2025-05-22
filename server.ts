@@ -2,10 +2,11 @@ import { execSync } from 'child_process';
 import fs from 'fs';
 import express from 'express';
 import { transcribeAudio } from './transcribe';
-
+import cors from 'cors';
+import { Render } from './render';
 function download(url: string) {
 
-    const process = execSync('yt-dlp.exe  -x --audio-format wav --output "public/%(id)s.%(ext)s" https://youtube.com/watch?v=' + url);
+    const process = execSync('yt-dlp  -x --audio-format wav --output "public/%(id)s.%(ext)s" https://youtube.com/watch?v=' + url);
     console.log(process.toString('utf-8'));
     const fileName = url + ".wav";
     return fileName
@@ -13,8 +14,8 @@ function download(url: string) {
 
 
 const app = express();
-
 app.use(express.static('public'));
+app.use(cors())
 
 
 app.get('/download', (req, res) => {
@@ -44,6 +45,25 @@ app.get('/transcribe', async (req, res) => {
 
     res.json(captions);
 })
+
+
+
+
+const ids = process.argv.slice(2)
+
 app.listen(4000,
-    (err) => console.log(err ?? "listening")
+    async (err) => {
+        console.log(err ?? "listening")
+        try {
+            for (const id of ids) {
+                console.log("Rendering:", id)
+                await Render(id);
+            }
+            process.exit(0)
+        } catch(e) {
+            console.log(e)
+            process.exit(1)
+        }
+    }
+
 )
